@@ -1,0 +1,77 @@
+﻿<h2>Biểu đồ doanh thu</h2>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label>Từ ngày:</label>
+        <input type="date" id="startDate" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label>Đến ngày:</label>
+        <input type="date" id="endDate" class="form-control" />
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button class="btn btn-primary" onclick="loadRevenue()">Lọc</button>
+    </div>
+</div>
+
+<canvas id="revenueChart" width="800" height="400"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        var revenueChart;
+
+        function loadRevenue() {
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+
+            $.ajax({
+                url: 'Admin/Home/GetRevenueData',
+                type: 'GET',
+                data: { startDate: startDate, endDate: endDate },
+                success: function (data) {
+                    const labels = data.map(x => x.date);
+                    const revenues = data.map(x => x.totalRevenue);
+
+                    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+                    if (revenueChart) {
+                        revenueChart.destroy();
+                    }
+
+                    revenueChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Doanh thu (VND)',
+                                data: revenues,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                },
+                error: function () {
+                    alert('Không thể tải dữ liệu doanh thu.');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            loadRevenue();
+        });
+    </script>
+}

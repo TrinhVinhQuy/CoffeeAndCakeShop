@@ -1,0 +1,50 @@
+﻿@model CoffeeAndCakeShop.Areas.Admin.Models.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Sửa Danh Mục";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" enctype="multipart/form-data" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Ảnh hiện tại:</label><br />
+        @if (!string.IsNullOrEmpty(Model.MetaImage))
+        {
+            <img src="~/@Model.MetaImage" width="150" />
+        }
+    </div>
+
+    <div class="form-group">
+        <label>Chọn ảnh mới (nếu muốn thay):</label>
+        <input asp-for="ImageFile" type="file" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsActive"></label>
+        <input asp-for="IsActive" type="checkbox" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

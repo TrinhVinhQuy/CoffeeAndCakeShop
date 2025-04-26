@@ -1,0 +1,49 @@
+﻿@model IEnumerable<CoffeeAndCakeShop.Entities.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Danh sách tài khoản";
+}
+
+<h2>Danh sách tài khoản</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Fullname</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Fullname</td>
+                <td>@user.Email</td>
+                <td>
+                    @if (user.IsActive == true)
+                    {
+                        <span class="text-success">Đang hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Bị khoá</span>
+                    }
+                </td>
+                <td>
+                    @if (user.IsActive == true)
+                    {
+                        <a href="@Url.Action("LockUser", "User", new { id = user.Id })" class="btn btn-danger btn-sm">Khoá</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("UnlockUser", "User", new { id = user.Id })" class="btn btn-success btn-sm">Mở khoá</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

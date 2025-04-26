@@ -1,0 +1,92 @@
+﻿@model List<ProductViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">📦 Danh sách sản phẩm</h2>
+
+    <div class="mb-3 text-end">
+        <a asp-action="Create" class="btn btn-primary">+ Thêm sản phẩm</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Loại</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@item.Name</td>
+                        <td>@item.Price.ToString("#,0") VND</td>
+                        <td>@item.CategoryName</td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge bg-success">Đang mở</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Đã khóa</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-2">Sửa</a>
+
+                            @if (item.IsActive)
+                            {
+                                <form asp-action="Lock" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Bạn có chắc muốn khoá sản phẩm này?');">
+                                        Khoá
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="Unlock" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success"
+                                            onclick="return confirm('Bạn có chắc muốn mở sản phẩm này?');">
+                                        Mở
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">Không có sản phẩm nào.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    setTimeout(function () {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.classList.remove('show');
+            alert.classList.add('hide');
+        }
+    }, 3000); // 3 giây
+</script>

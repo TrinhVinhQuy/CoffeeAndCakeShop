@@ -1,0 +1,28 @@
+﻿@model RegisterViewModel
+
+<form asp-action="Register" class="p-4 shadow rounded bg-white" style="max-width: 400px; margin: auto;">
+    <h2 class="mb-4 text-center">Đăng ký</h2>
+
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
+        <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập" />
+        <span asp-validation-for="UserName" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" placeholder="Nhập email" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Mật khẩu</label>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu" />
+        <span asp-validation-for="Password" class="text-danger small"></span>
+    </div>
+    <button type="submit" class="btn btn-lightBrown w-100">Đăng ký</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

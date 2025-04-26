@@ -1,0 +1,37 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewData["Title"] = "Thêm danh mục";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center">➕ Thêm danh mục mới</h2>
+
+    <form asp-action="Create" enctype="multipart/form-data" method="post">
+        <div class="mb-3">
+            <label class="form-label">Tên danh mục</label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ảnh danh mục</label>
+            <input type="file" name="ImageFile" class="form-control" />
+        </div>
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label class="form-check-label">Hiển thị</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Lưu</button>
+    </form>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,54 @@
+﻿@model EditProfileViewModel
+
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="mb-4 text-center">Thông tin </h2>
+
+   @*  @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    } *@
+
+    <form asp-action="Edit" method="post" class="p-4 shadow rounded bg-white">
+        <div class="mb-3">
+            <label asp-for="Fullname" class="form-label">Họ và tên</label>
+            <input asp-for="Fullname" class="form-control" />
+            <span asp-validation-for="Fullname" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MobilePhone" class="form-label">Điện thoại</label>
+            <input asp-for="MobilePhone" class="form-control" />
+            <span asp-validation-for="MobilePhone" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Province" class="form-label">Tỉnh/ Thành phố</label>
+            <input asp-for="Province" class="form-control" />
+            <span asp-validation-for="Province" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="District" class="form-label">Quận/ Huyện</label>
+            <input asp-for="District" class="form-control" />
+            <span asp-validation-for="District" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Town" class="form-label">Phường/ Xã</label>
+            <input asp-for="Town" class="form-control" />
+            <span asp-validation-for="Town" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Address" class="form-label">Số nhà</label>
+            <input asp-for="Address" class="form-control" />
+            <span asp-validation-for="Address" class="text-danger small"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Thay đổi</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

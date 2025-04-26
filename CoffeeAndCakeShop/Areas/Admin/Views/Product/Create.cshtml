@@ -1,0 +1,126 @@
+﻿@model ProductCreateViewModel
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<h2>Add Product</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" type="number" min="0" required />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Discount"></label>
+        <input asp-for="Discount" class="form-control" id="discountInput" type="number" min="0" max="100" required />
+        <span asp-validation-for="Discount" class="text-danger"></span>
+        <small id="discountWarning" class="text-danger" style="display:none;">Discount must be between 0 and 100.</small>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Quantity"></label>
+        <input asp-for="Quantity" class="form-control" type="number" min="0" required />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control" required></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryId"></label>
+        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control" required></select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group form-check">
+        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <div class="form-group">
+        <label>Upload Images</label>
+        <input type="file" name="Images" multiple class="form-control" required />
+        <small class="form-text text-muted">You can upload multiple images.</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Product</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        const form = document.querySelector("form");
+        const inputs = form.querySelectorAll("input, textarea, select");
+        const discountInput = document.getElementById("discountInput");
+        const discountWarning = document.getElementById("discountWarning");
+
+        // Bắt lỗi từng field khi người dùng gõ
+        inputs.forEach(input => {
+            input.addEventListener("input", () => validateField(input));
+            input.addEventListener("blur", () => validateField(input));
+        });
+
+        function validateField(input) {
+            const errorSpan = input.nextElementSibling;
+            input.classList.remove("is-invalid");
+            if (errorSpan && errorSpan.classList.contains("text-danger")) {
+                errorSpan.style.display = "none";
+                errorSpan.innerText = "";
+            }
+
+            if (!input.validity.valid) {
+                input.classList.add("is-invalid");
+                if (errorSpan && errorSpan.classList.contains("text-danger")) {
+                    errorSpan.style.display = "inline";
+                    if (input.validity.valueMissing) {
+                        errorSpan.innerText = "This field is required.";
+                    } else if (input.validity.typeMismatch) {
+                        errorSpan.innerText = "Invalid type.";
+                    } else if (input.validity.rangeUnderflow || input.validity.rangeOverflow) {
+                        errorSpan.innerText = `Value must be between ${input.min} and ${input.max}.`;
+                    } else if (input.validity.patternMismatch) {
+                        errorSpan.innerText = "Invalid format.";
+                    }
+                }
+            }
+
+            // Riêng Discount
+            if (input === discountInput) {
+                const value = parseInt(input.value);
+                if (isNaN(value) || value < 0 || value > 100) {
+                    discountWarning.style.display = "inline";
+                    input.classList.add("is-invalid");
+                } else {
+                    discountWarning.style.display = "none";
+                }
+            }
+        }
+
+        // Kiểm tra toàn bộ form trước khi submit
+        form.addEventListener("submit", function (e) {
+            let hasError = false;
+            inputs.forEach(input => {
+                validateField(input);
+                if (!input.validity.valid) hasError = true;
+            });
+
+            if (hasError) {
+                e.preventDefault();
+                alert("Please fix the errors in the form before submitting.");
+            }
+        });
+    </script>
+}

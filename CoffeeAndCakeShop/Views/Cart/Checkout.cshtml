@@ -1,0 +1,145 @@
+﻿@model CheckoutView
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    var total = Model.CartItems.Sum(item => item.Price * item.Quantity);
+}
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">🧾 Thông tin thanh toán</h2>
+
+    <!-- Hiển thị lỗi -->
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <form asp-action="Checkout" method="post">
+        <div class="row">
+            <!-- Cột trái: Thông tin giao hàng -->
+            <div class="col-md-6">
+                <h4>Thông tin giao hàng</h4>
+
+                <div class="mb-3">
+                    <label class="form-label">Tỉnh/Thành phố</label>
+                    <input asp-for="Province" class="form-control" required />
+                    <span asp-validation-for="Province" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Quận/Huyện</label>
+                    <input asp-for="District" class="form-control" required />
+                    <span asp-validation-for="District" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Xã/Phường</label>
+                    <input asp-for="Town" class="form-control" required />
+                    <span asp-validation-for="Town" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Địa chỉ cụ thể</label>
+                    <input asp-for="Address" class="form-control" required />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Phương thức thanh toán</label>
+                    <select asp-for="PaymentMethod" class="form-control" required>
+                        <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                        <option value="VnPay">Ví VnPay</option>
+                    </select>
+                    <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Cột phải: Giỏ hàng -->
+            <div class="col-md-6">
+                <h4>Giỏ hàng</h4>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>SL</th>
+                            <th>Giá</th>
+                            <th>Tổng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price.ToString("#,0") VND</td>
+                                <td>@((item.Price * item.Quantity).ToString("#,0")) VND</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Nhập mã giảm giá -->
+                <div class="mb-3">
+                    <label class="form-label">Mã giảm giá (nếu có)</label>
+                    <div class="input-group">
+                        <input asp-for="CouponCode" id="couponCode" class="form-control" placeholder="Nhập mã giảm giá" />
+                        <button type="button" id="applyCouponBtn" class="btn btn-outline-primary">Áp mã</button>
+                    </div>
+                    <span id="couponError" class="text-danger"></span>
+                </div>
+
+                <!-- Tổng tiền -->
+                <div class="text-end mt-3">
+                    <h5>Tạm tính: <span id="subtotal">@total.ToString("#,0") VND</span></h5>
+
+                    <div id="discountArea" style="display:@(Model.DiscountAmount > 0 ? "block" : "none")">
+                        <h5 class="text-success">Giảm giá: -<span id="discountAmount">@Model.DiscountAmount.ToString("#,0")</span> VND</h5>
+                    </div>
+
+                    <h4 class="text-danger fw-bold">
+                        Tổng cộng: <span id="finalTotal">@((total - Model.DiscountAmount).ToString("#,0"))</span> VND
+                    </h4>
+                </div>
+
+
+                <!-- Nút xác nhận -->
+                <div class="d-grid gap-2 mt-3">
+                    <button type="submit" class="btn btn-success">Xác nhận đặt hàng</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <!-- Kích hoạt validation -->
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $("#applyCouponBtn").click(function () {
+                var couponCode = $("#couponCode").val();
+
+                $.ajax({
+                    url: '@Url.Action("ApplyCoupon", "Cart")',
+                    type: 'POST',
+                    data: { couponCode: couponCode },
+                    success: function (res) {
+                        if (res.success) {
+                            $("#discountArea").show();
+                            $("#discountAmount").text(res.discountAmount.toLocaleString());
+                            $("#finalTotal").text(res.finalTotal.toLocaleString());
+                            $("#couponError").text("");
+                        } else {
+                            $("#discountArea").hide();
+                            $("#discountAmount").text("");
+                            $("#couponError").text(res.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi áp mã!");
+                    }
+                });
+            });
+        });
+    </script>
+}

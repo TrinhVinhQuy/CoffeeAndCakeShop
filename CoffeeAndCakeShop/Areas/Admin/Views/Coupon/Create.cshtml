@@ -1,0 +1,45 @@
+﻿@model CoffeeAndCakeShop.Entities.Coupon
+
+@{
+    ViewData["Title"] = "Thêm mã giảm giá";
+}
+
+<h2 class="mb-4">➕ Thêm mã giảm giá</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label">Mã giảm giá</label>
+        <input asp-for="Code" class="form-control" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DiscountPercent" class="form-label">Phần trăm giảm (%)</label>
+        <input asp-for="DiscountPercent" class="form-control" />
+        <span asp-validation-for="DiscountPercent" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartDate" class="form-label">Ngày bắt đầu</label>
+        <input asp-for="StartDate" type="date" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EndDate" class="form-label">Ngày kết thúc</label>
+        <input asp-for="EndDate" type="date" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label">Kích hoạt</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu lại</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

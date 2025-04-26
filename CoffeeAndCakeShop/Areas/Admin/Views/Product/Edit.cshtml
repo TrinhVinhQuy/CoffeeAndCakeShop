@@ -1,0 +1,57 @@
+﻿@model EditProductViewModel
+
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+}
+
+<h2>Sửa sản phẩm</h2>
+
+<form asp-action="Edit" enctype="multipart/form-data" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryName" class="form-label"></label>
+        <select asp-for="CategoryName" class="form-select" asp-items="Model.Categories">
+            <option value="">-- Chọn danh mục --</option>
+        </select>
+    </div>
+
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label>Ảnh hiện tại:</label>
+        <div class="row">
+            @for (int i = 0; i < Model.ExistingImages.Count; i++)
+            {
+                <div class="col-md-3 mb-3">
+                    <img src="~/@Model.ExistingImages[i]" class="img-thumbnail" />
+                    <div class="form-check">
+                        <input type="checkbox" name="DeleteImages" value="@Model.ExistingImages[i]" class="form-check-input" />
+                        <label class="form-check-label">Xóa ảnh này</label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Thêm hình ảnh mới:</label>
+        <input type="file" asp-for="NewImages" multiple class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+</form>

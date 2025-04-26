@@ -1,0 +1,43 @@
+﻿@model IEnumerable<CoffeeAndCakeShop.Entities.Coupon>
+
+@{
+    ViewData["Title"] = "Danh sách mã giảm giá";
+}
+
+<h2 class="mb-4">Danh sách mã giảm giá</h2>
+
+<a href="@Url.Action("Create", "Coupon", new { area = "Admin" })" class="btn btn-primary mb-3">➕ Thêm mã giảm giá</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã</th>
+            <th>Giảm (%)</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Code</td>
+                <td>@item.DiscountPercent %</td>
+                <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
+                <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @if (item.IsActive && item.EndDate >= DateTime.Now)
+                    {
+                        <span class="badge bg-success">Đang hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Đã khóa</span>
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

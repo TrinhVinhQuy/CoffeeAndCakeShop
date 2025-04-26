@@ -1,0 +1,76 @@
+﻿@model List<CartItem>
+
+<style>
+    .btn-outline-secondary {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        font-weight: bold;
+    }
+
+    .text-lightBrown {
+        color: #b77f51;
+    }
+</style>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var total = Model.Sum(item => item.Price * item.Quantity);
+}
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">🛒 Giỏ hàng của bạn</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p class="text-center">Chưa có sản phẩm nào trong giỏ hàng.</p>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><img src="@item.Image" width="60" style="border-radius: 10px;" /></td>
+                        <td>@item.Name</td>
+                        <td>@item.Price.ToString("#,0") VND</td>
+                        <td>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a href="@Url.Action("DecreaseQuantity", "Cart", new { productId = item.ProductId })" class="btn btn-sm btn-outline-secondary me-2">-</a>
+                                <span class="px-2">@item.Quantity</span>
+                                <a href="@Url.Action("IncreaseQuantity", "Cart", new { productId = item.ProductId })" class="btn btn-sm btn-outline-secondary ms-2">+</a>
+                            </div>
+                        </td>
+                        <td>@((item.Price * item.Quantity).ToString("#,0")) VND</td>
+                        <td>
+                            <a href="@Url.Action("RemoveFromCart", "Cart", new { productId = item.ProductId })" class="btn btn-sm btn-danger">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="text-end mt-3">
+            <h4>Tổng tiền: <span class="text-lightBrown fw-bold">@total.ToString("#,0") VND</span></h4>
+            <a href="/Cart/Checkout" class="btn btn-success btn-lg mt-2">Thanh toán</a>
+        </div>
+    }
+</div>
