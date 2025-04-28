@@ -4,7 +4,7 @@
     ViewData["Title"] = "Quản lý sản phẩm";
 }
 
-<div class="container py-4">
+<div class=" py-4">
     <h2 class="mb-4">📦 Danh sách sản phẩm</h2>
 
     <div class="mb-3 text-end">
@@ -36,11 +36,11 @@
                         <td>
                             @if (item.IsActive)
                             {
-                                <span class="badge bg-success">Đang mở</span>
+                                <span class="badge bg-success text-light">Đang mở</span>
                             }
                             else
                             {
-                                <span class="badge bg-danger">Đã khóa</span>
+                                <span class="badge bg-danger text-light">Đã khóa</span>
                             }
                         </td>
                         <td>

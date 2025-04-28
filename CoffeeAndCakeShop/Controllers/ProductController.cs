@@ -27,6 +27,7 @@ namespace CoffeeAndCakeShop.Controllers
                             p.Price,
                             p.Description,
                             p.Discount,
+                            p.Quantity,
                             CategoryName = c.Name, // lấy tên từ Category
                             Image = p.ProductImages.Select(i => i.Image).FirstOrDefault()
                         };

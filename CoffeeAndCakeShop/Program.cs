@@ -1,4 +1,7 @@
-using CoffeeAndCakeShop.Configuration;
+﻿using CoffeeAndCakeShop.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,25 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Cấu hình Lockout
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khoá trong 5 phút
+    options.Lockout.MaxFailedAccessAttempts = 5; // Sai 5 lần thì khoá
+    options.Lockout.AllowedForNewUsers = true; // Áp dụng cả cho tài khoản mới
+});
+// Add Authentication services
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = "398246192425-udc37d65ti6vlntmk18fgu2uv0tgbh99.apps.googleusercontent.com";
+    options.ClientSecret = "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";
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

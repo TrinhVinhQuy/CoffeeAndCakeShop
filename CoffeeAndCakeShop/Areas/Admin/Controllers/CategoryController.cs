@@ -15,9 +15,9 @@ namespace CoffeeAndCakeShop.Areas.Admin.Controllers
         {
             _context = context;
         }
-
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
+            int pageSize = 5; // mỗi trang 5 mục
             var categories = _context.Categories
                 .Select(c => new CategoryViewModel
                 {
@@ -27,10 +27,38 @@ namespace CoffeeAndCakeShop.Areas.Admin.Controllers
                     MetaImage = c.MetaImage,
                     IsActive = c.IsActive,
                     CreateOn = c.CreateOn
-                }).ToList();
+                })
+                .ToList();
 
-            return View(categories); // Trả về List<CategoryViewModel>
+            int totalItems = categories.Count;
+            var items = categories
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
+
+            return View(items);
         }
+
+
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            category.IsActive = !category.IsActive; // Đảo ngược trạng thái
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = category.IsActive ? "Mở khoá danh mục thành công!" : "Khoá danh mục thành công!";
+            return RedirectToAction(nameof(Index));
+        }
+
 
         public IActionResult Create()
         {

@@ -48,19 +48,25 @@
 
             <form method="post" asp-action="AddToCart" asp-controller="Cart" class="mt-4">
                 <input type="hidden" name="productId" value="@Model.Id" />
-
-                <div class="mb-3 d-flex align-items-center">
-                    <label for="quantity" class="form-label me-3 fw-bold">Số lượng:</label>
-                    <div class="input-group" style="width: 120px;">
-                        <button type="button" class="btn btn-outline-secondary" id="btn-minus" onclick="changeQty(-1)">-</button>
-                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.Quantity" class="form-control text-center" />
-                        <button type="button" class="btn btn-outline-secondary" id="btn-plus" onclick="changeQty(1)">+</button>
+                @if (Model.Quantity > 0)
+                {
+                    <div class="mb-3 d-flex align-items-center">
+                        <label for="quantity" class="form-label me-3 fw-bold">Số lượng:</label>
+                        <div class="input-group" style="width: 120px;">
+                            <button type="button" class="btn btn-outline-secondary" id="btn-minus" onclick="changeQty(-1)">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.Quantity" class="form-control text-center" />
+                            <button type="button" class="btn btn-outline-secondary" id="btn-plus" onclick="changeQty(1)">+</button>
+                        </div>
                     </div>
-                </div>
 
-                <button type="submit" class="btn btn-dark me-2">
-                    <i class="fa fa-cart-plus me-1"></i> Thêm vào giỏ
-                </button>
+                    <button type="submit" class="btn btn-dark me-2">
+                        <i class="fa fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                }
+                else
+                {
+                    <p>Sản phẩm tạm hết hàng</p>
+                }
             </form>
         </div>
     </div>

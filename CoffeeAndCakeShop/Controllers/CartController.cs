@@ -30,6 +30,11 @@ namespace CoffeeAndCakeShop.Controllers
             if (product == null)
                 return NotFound();
 
+            if (product.Quantity == 0)
+            {
+                return NotFound();
+            }
+
             var cart = GetCart();
             var existingItem = cart.FirstOrDefault(c => c.ProductId == product.Id);
 
@@ -258,8 +263,19 @@ namespace CoffeeAndCakeShop.Controllers
                         Quanlity = item.Quantity
                     }).ToList()
                 };
-
                 _db.Orders.Add(order);
+                foreach (var item in cart)
+                {
+                    var product = _db.Products.FirstOrDefault(p => p.Id == item.ProductId);
+                    if (product != null)
+                    {
+                        product.Quantity -= item.Quantity;
+                        product.SoldItem += item.Quantity;
+                        // Nếu không muốn Quantity âm, thêm dòng này:
+                        if (product.Quantity < 0)
+                            product.Quantity = 0;
+                    }
+                }
                 _db.SaveChanges();
             }
             else if (model.PaymentMethod == "VnPay")
@@ -295,79 +311,6 @@ namespace CoffeeAndCakeShop.Controllers
             TempData["Success"] = "Đơn hàng của bạn đã được đặt thành công!";
             return RedirectToAction("Index", "Order");
         }
-
-        //[HttpPost]
-        //[Authorize]
-        //public IActionResult Checkout(CheckoutView model)
-        //{
-        //    var cart = GetCart(); // lấy giỏ hàng từ session
-
-        //    if (cart == null || !cart.Any())
-        //    {
-        //        TempData["Error"] = "Không có sản phẩm nào trong giỏ hàng.";
-        //        return RedirectToAction("Index", "Cart");
-        //    }
-
-        //    if (model.PaymentMethod == "COD")
-        //    {
-        //        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        //        var order = new Order
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            CreateOn = DateTime.Now,
-        //            Province = model.Province,
-        //            District = model.District,
-        //            Town = model.Town,
-        //            Address = model.Address,
-        //            TotalAmount = (double)cart.Sum(c => c.Price * c.Quantity),
-        //            StatusProcessing = "Chờ xử lý",
-        //            UserId = userId,
-        //            OrderDetails = cart.Select(item => new OrderDetail
-        //            {
-        //                Id = Guid.NewGuid(),
-        //                ProductId = item.ProductId,
-        //                UnitPrice = (decimal)item.Price,
-        //                Quanlity = item.Quantity
-        //            }).ToList()
-        //        };
-
-        //        _db.Orders.Add(order);
-        //        _db.SaveChanges();
-
-
-        //    }
-        //    if (model.PaymentMethod == "VnPay")
-        //    {
-        //        HttpContext.Session.SetString("Province", model.Province);
-        //        HttpContext.Session.SetString("District", model.District);
-        //        HttpContext.Session.SetString("Town", model.Town);
-        //        HttpContext.Session.SetString("Address", model.Address);
-
-        //        var vnp = new VnPayLibrary();
-        //        var tick = DateTime.Now.Ticks.ToString();
-
-        //        vnp.AddRequestData("vnp_Version", "2.1.0");
-        //        vnp.AddRequestData("vnp_Command", "pay");
-        //        vnp.AddRequestData("vnp_TmnCode", "IOXXRAP3");
-        //        vnp.AddRequestData("vnp_Amount", ((int)((double)cart.Sum(c => c.Price * c.Quantity) * 100)).ToString());
-        //        vnp.AddRequestData("vnp_CurrCode", "VND");
-        //        vnp.AddRequestData("vnp_TxnRef", tick);
-        //        vnp.AddRequestData("vnp_OrderInfo", $"Đơn hàng {tick}");
-        //        vnp.AddRequestData("vnp_OrderType", "other");
-        //        vnp.AddRequestData("vnp_Locale", "vn");
-        //        vnp.AddRequestData("vnp_ReturnUrl", "https://localhost:7143/Cart/CfVnPay");
-        //        vnp.AddRequestData("vnp_IpAddr", HttpContext.Connection.RemoteIpAddress?.ToString());
-        //        vnp.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-
-        //        string paymentUrl = vnp.CreateRequestUrl("https://sandbox.vnpayment.vn/paymentv2/vpcpay.html", "SXA9V57XQ9YM46CKPLSF3LCN20WIY6DC");
-
-        //        return Redirect(paymentUrl);
-        //    }
-        //    ClearCart(); // xóa session giỏ hàng sau khi thanh toán
-        //    TempData["Success"] = "Đơn hàng của bạn đã được đặt thành công!";
-        //    return RedirectToAction("Index", "Home");
-        //}
         private void ClearCart()
         {
             HttpContext.Session.Remove("Cart");
@@ -404,6 +347,18 @@ namespace CoffeeAndCakeShop.Controllers
                 };
 
                 _db.Orders.Add(order);
+                foreach (var item in cart)
+                {
+                    var product = _db.Products.FirstOrDefault(p => p.Id == item.ProductId);
+                    if (product != null)
+                    {
+                        product.Quantity -= item.Quantity;
+                        product.SoldItem += item.Quantity;
+                        // Nếu không muốn Quantity âm, thêm dòng này:
+                        if (product.Quantity < 0)
+                            product.Quantity = 0;
+                    }
+                }
                 _db.SaveChanges();
 
                 ClearCart(); // xóa session giỏ hàng sau khi thanh toán

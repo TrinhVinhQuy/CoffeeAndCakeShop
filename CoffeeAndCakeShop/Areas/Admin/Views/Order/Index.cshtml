@@ -1,10 +1,25 @@
-﻿@model IEnumerable<CoffeeAndCakeShop.Entities.Order>
+﻿@model List<CoffeeAndCakeShop.Entities.Order>
 
 @{
     ViewData["Title"] = "Danh sách đơn hàng";
+    var totalItems = (int)ViewBag.TotalItems;
+    var pageSize = (int)ViewBag.PageSize;
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 }
 
 <h2>Danh sách đơn hàng</h2>
+<form method="get" class="row mb-4">
+    <div class="col-md-3">
+        <input type="date" class="form-control" name="fromDate" value="@(Context.Request.Query["fromDate"])" placeholder="Từ ngày">
+    </div>
+    <div class="col-md-3">
+        <input type="date" class="form-control" name="toDate" value="@(Context.Request.Query["toDate"])" placeholder="Đến ngày">
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </div>
+</form>
 
 <table class="table table-bordered">
     <thead>
@@ -35,6 +50,21 @@
         }
     </tbody>
 </table>
+
+<!-- Phân trang -->
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
 
 <!-- Modal popup -->
 <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
@@ -67,6 +97,7 @@
                 }
             });
         }
+
         function completeOrder(orderId) {
             if (confirm('Bạn có chắc chắn muốn hoàn thành đơn hàng này không?')) {
                 $.ajax({
@@ -74,7 +105,7 @@
                     type: 'POST',
                     success: function () {
                         alert('Đã hoàn thành đơn hàng.');
-                        location.reload(); // hoặc close modal và reload list đơn hàng
+                        location.reload();
                     },
                     error: function () {
                         alert('Có lỗi xảy ra.');
@@ -82,6 +113,5 @@
                 });
             }
         }
-
     </script>
 }

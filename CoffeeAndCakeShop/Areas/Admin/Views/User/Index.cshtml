@@ -34,7 +34,7 @@
                     }
                 </td>
                 <td>
-                    @if (user.IsActive == true)
+                    @if (user.IsActive == false)
                     {
                         <a href="@Url.Action("LockUser", "User", new { id = user.Id })" class="btn btn-danger btn-sm">Khoá</a>
                     }
